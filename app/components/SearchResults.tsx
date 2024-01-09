@@ -17,6 +17,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({ episodes }) => {
     number | null
   >(null);
   const [isTweetLoaded, setIsTweetLoaded] = useState<boolean>(false);
+  const [expandedSegment, setExpandedSegment] = useState<number | null>(null);
+
+  const handleSegmentClick = (
+    episodeIndex: number,
+    segmentNumber: number,
+    event: React.MouseEvent
+  ) => {
+    console.log('handleSegmentClick', episodeIndex, segmentNumber);
+    // event.stopPropagation(); // Prevents the episode click event
+    if (
+      selectedEpisodeIndex === episodeIndex &&
+      expandedSegment === segmentNumber
+    ) {
+      // Close the segment if it's already open
+      setExpandedSegment(null);
+    } else {
+      // Open the clicked segment
+      setExpandedSegment(segmentNumber);
+    }
+  };
 
   return (
     <div className="container p-4 mx-auto">
@@ -72,7 +92,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ episodes }) => {
                 );
 
                 return (
-                  <div key={segmentNumber}>
+                  <div
+                    key={segmentNumber}
+                    onClick={(e) => handleSegmentClick(index, segmentNumber, e)}
+                  >
                     <h3 className="text-lg font-bold text-violet-400">
                       {matchedSegment?.headline}
                     </h3>
@@ -82,41 +105,43 @@ const SearchResults: React.FC<SearchResultsProps> = ({ episodes }) => {
                     </p>
 
                     {/* Render expanded segment details if episode is selected */}
-                    {selectedEpisodeIndex === index && matchedSegment && (
-                      <li
-                        onClick={(event) => event.stopPropagation()}
-                        className="pl-0 list-none"
-                      >
-                        {/* Sources */}
-                        <div className="mt-4 ">
-                          <div className="">
-                            {/* Embed Tweet */}
-                            {matchedSegment.URL &&
-                              matchedSegment.URL.map((url) => {
-                                const tweetId = getTweetIdFromUrl(url);
-                                if (tweetId) {
-                                  return (
-                                    <TweetEmbed
-                                      key={url}
-                                      url={url}
-                                      isTweetLoaded={isTweetLoaded}
-                                      setIsTweetLoaded={setIsTweetLoaded}
-                                    />
-                                  );
-                                }
-                                return null; // Show nothing for non-Twitter URLs
-                              })}
+                    {selectedEpisodeIndex === index &&
+                      expandedSegment === segmentNumber &&
+                      matchedSegment && (
+                        <li
+                          onClick={(event) => event.stopPropagation()}
+                          className="pl-0 list-none"
+                        >
+                          {/* Sources */}
+                          <div className="mt-4 ">
+                            <div className="">
+                              {/* Embed Tweet */}
+                              {matchedSegment.URL &&
+                                matchedSegment.URL.map((url) => {
+                                  const tweetId = getTweetIdFromUrl(url);
+                                  if (tweetId) {
+                                    return (
+                                      <TweetEmbed
+                                        key={url}
+                                        url={url}
+                                        isTweetLoaded={isTweetLoaded}
+                                        setIsTweetLoaded={setIsTweetLoaded}
+                                      />
+                                    );
+                                  }
+                                  return null; // Show nothing for non-Twitter URLs
+                                })}
+                            </div>
                           </div>
-                        </div>
 
-                        <YouTubeEmbed
-                          youtubeUrl={episode.youtube_url}
-                          startTimeMs={matchedSegment.start_time_ms}
-                          maxWidth="screen-sm"
-                        />
-                      </li>
-                    )}
-                    {/* White separator line */}
+                          <YouTubeEmbed
+                            youtubeUrl={episode.youtube_url}
+                            startTimeMs={matchedSegment.start_time_ms}
+                            maxWidth="screen-sm"
+                          />
+                        </li>
+                      )}
+                    {/* Segment separator line */}
                     {segmentNumber !==
                       episode.matchedSegmentNumbers[
                         episode.matchedSegmentNumbers.length - 1

@@ -15,15 +15,15 @@ export default function Home() {
   const { performSearch, clearSearchResults } = useSearch();
   const { getAllEpisodes, getNewPage, hasMore } = useEpisodes();
 
-  // useEffect(() => {
-  //   getNewPage(page);
-  // }, [page, hasMore]);
-
   useEffect(() => {
     getAllEpisodes();
   }, []);
 
   // Intersection Observer to detect when the user has scrolled to the bottom
+  // useEffect(() => {
+  //   getNewPage(page);
+  // }, [page, hasMore]);
+
   // useEffect(() => {
   //   const observer = new IntersectionObserver(
   //     (entries) => {

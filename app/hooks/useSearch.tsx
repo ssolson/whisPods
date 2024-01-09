@@ -7,7 +7,6 @@ export function useSearch() {
 
   const performSearch = async (term: string) => {
     try {
-      console.log('term', term);
       const response = await fetch(`/api/search/${encodeURIComponent(term)}`);
       const data = await response.json();
       if (data && Array.isArray(data.data)) {

@@ -28,7 +28,10 @@ export async function GET(req: NextRequest) {
     }
 
     const transcriptCollection = db.collection("theDailyGweiTranscript");
-    const transcripts = await transcriptCollection.find({}).toArray();
+    // const transcripts = await transcriptCollection.find({}).toArray();
+    const transcripts = await transcriptCollection.find({
+      complete_transcript: { $regex: searchTerm, $options: 'i' }
+    }).toArray();
 
     const matchedEpisodes: {
       episodeId: string;
