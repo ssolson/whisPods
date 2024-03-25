@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, FC } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { SearchBar } from '@/app/components/SearchBar';
 import { EpisodeProps } from '@/types';
 import SearchSegment from '@/app/components/SearchSegment';
 import { FaWindowMinimize } from 'react-icons/fa';
@@ -37,16 +36,14 @@ const SearchPage: FC = () => {
   }, [searchTerm]);
 
   return (
-    <div className="container p-4 mx-auto">
+    <div className="container mx-auto p-4">
       <h1 className="mb-4 text-xl font-bold">Search Episodes</h1>
-
-      {/* <SearchBar onSearch={performSearch} /> */}
 
       <div className="mt-8">
         {episodes.map((episode, index) => (
           <div
             key={index}
-            className="relative p-2 mb-3 border rounded shadow"
+            className="relative mb-3 rounded border p-2 shadow"
             onClick={() =>
               setSelectedEpisodeIndex(
                 index === selectedEpisodeIndex ? null : index,
@@ -60,17 +57,17 @@ const SearchPage: FC = () => {
                   event.stopPropagation();
                   setSelectedEpisodeIndex(null);
                 }}
-                className="absolute text-white rounded shadow top-1 right-2"
+                className="absolute right-2 top-1 rounded text-white shadow"
               >
                 <FaWindowMinimize />
               </button>
             )}
 
-            <div className="p-2 bg-baseText2 rounded">
+            <div className="bg-baseText2 rounded p-2">
               <h1 className="text-xl font-semibold">
                 {episode.episode_number}: {episode.episode_title}
               </h1>
-              <h3 className="font-semibold text-m">{episode.release_date}</h3>
+              <h3 className="text-m font-semibold">{episode.release_date}</h3>
             </div>
 
             {episode.matchedSegmentNumbers.map((segmentNumber) => {
@@ -80,7 +77,7 @@ const SearchPage: FC = () => {
 
               return (
                 <div key={segmentNumber}>
-                  <h3 className="text-lg font-bold text-textBase">Title:</h3>
+                  <h3 className="text-textBase text-lg font-bold">Title:</h3>
 
                   <h2 className="pt-1 text-lg font-semibold ">
                     {matchedSegment?.headline}
@@ -90,7 +87,7 @@ const SearchPage: FC = () => {
                   {selectedEpisodeIndex === index && matchedSegment && (
                     <li
                       onClick={(event) => event.stopPropagation()}
-                      className="pl-0 list-none"
+                      className="list-none pl-0"
                     >
                       <SearchSegment
                         segment={matchedSegment}
@@ -104,7 +101,7 @@ const SearchPage: FC = () => {
                   {segmentNumber !==
                     episode.matchedSegmentNumbers[
                       episode.matchedSegmentNumbers.length - 1
-                    ] && <div className="separator my-4 bg-white h-0.5 "></div>}
+                    ] && <div className="separator my-4 h-0.5 bg-white "></div>}
                 </div>
               );
             })}

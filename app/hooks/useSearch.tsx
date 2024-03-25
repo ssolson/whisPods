@@ -13,7 +13,6 @@ export function useSearch() {
         setState(() => ({
           ...state,
           searchResultEpisodes: data.data,
-          hasSearched: true,
         }));
       }
     } catch (error) {

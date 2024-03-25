@@ -1,85 +1,74 @@
-import { NextResponse, NextRequest } from "next/server";
-import { getClientAndDb } from "@/app/api/mongo/db";
-import { ObjectId } from "mongodb"; // Import ObjectId
-
-export const dynamic = "force-dynamic";
-
-function isValidObjectId(str: string): boolean {
-  return /^[a-fA-F0-9]{24}$/.test(str);
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { getClientAndDb } from '../../mongo/db';
 
 export async function GET(req: NextRequest) {
-  if (req.method !== "GET") {
-    return NextResponse.json({ status: 405, message: "Method Not Allowed" });
-  }
+  const url = new URL(req.url);
+  const searchTerm = url.searchParams.get('searchTerm') || '';
+  const page = parseInt(url.searchParams.get('page') || '0', 10);
+  const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
+  const skip = page * pageSize;
+  console.log(page, pageSize, searchTerm, url);
 
   try {
     const { db } = await getClientAndDb();
+    const collection = db.collection('thedailygweiRecap');
 
-    // Extract search term from the request URL
-    const pathParts = req.nextUrl.pathname.split("/");
-    const searchTerm = pathParts[pathParts.length - 1].toLowerCase();
+    let pipeline = [
+      {
+        $search: {
+          index: 'default',
+          compound: {
+            should: [
+              {
+                text: {
+                  query: searchTerm,
+                  path: 'episode_title',
+                  fuzzy: {},
+                  score: { boost: { value: 3 } },
+                },
+              },
+              {
+                text: {
+                  query: searchTerm,
+                  path: 'episode_data.headline',
+                  fuzzy: {},
+                  score: { boost: { value: 2 } },
+                },
+              },
+              {
+                text: {
+                  query: searchTerm,
+                  path: 'episode_data.summary',
+                  fuzzy: {},
+                  score: { boost: { value: 1 } },
+                },
+              },
+            ],
+            minimumShouldMatch: 1,
+          },
+        },
+      },
+      { $skip: skip },
+      { $limit: pageSize },
+    ];
 
     if (!searchTerm) {
-      return NextResponse.json({
-        status: 400,
-        message: "Search term is required",
-      });
+      pipeline.shift();
     }
 
-    const transcriptCollection = db.collection("theDailyGweiTranscript");
-    // const transcripts = await transcriptCollection.find({}).toArray();
-    const transcripts = await transcriptCollection.find({
-      complete_transcript: { $regex: searchTerm, $options: 'i' }
-    }).toArray();
-
-    const matchedEpisodes: {
-      episodeId: string;
-      matchedSegmentNumbers: number[];
-    }[] = [];
-
-    transcripts.forEach((transcript) => {
-      const matchedSegmentNumbers = transcript.complete_transcript
-        .map(
-          (
-            segmentText: string,
-            index: number // Explicitly annotate index as number
-          ) => (segmentText.toLowerCase().includes(searchTerm) ? index : -1)
-        )
-        .filter((index: number) => index !== -1); // You can also annotate here for clarity, though it's not strictly necessary
-
-      if (matchedSegmentNumbers.length > 0) {
-        matchedEpisodes.push({
-          episodeId: transcript._id.toString(), // Convert ObjectId to string
-          matchedSegmentNumbers,
-        });
-      }
-    });
-
-    const recapCollection = db.collection("thedailygweiRecap");
-    const episodeNumbers = matchedEpisodes.map((episode) =>
-      parseInt(episode.episodeId)
+    const searchResults = await collection.aggregate(pipeline).toArray();
+    return new NextResponse(
+      JSON.stringify({
+        status: 200,
+        message: 'Success',
+        data: searchResults,
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
     );
-
-    const episodes = await recapCollection
-      .find({ episode_number: { $in: episodeNumbers } })
-      .toArray();
-
-    const result = episodes.map((episode) => ({
-      ...episode,
-      matchedSegmentNumbers: matchedEpisodes.find(
-        (match) => match.episodeId === episode._id.toString()
-      )?.matchedSegmentNumbers,
-    }));
-
-    const response = NextResponse.json({
-      status: 200,
-      message: "Success",
-      data: result,
-    });
-
-    response.headers.set("Cache-Control", "no-store, max-age=0");
-    return response;
   } catch (error: any) {
     console.error(error);
     return NextResponse.json({ status: 500, message: error.message });

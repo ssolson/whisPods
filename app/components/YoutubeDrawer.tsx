@@ -1,12 +1,13 @@
 `use client`;
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../hooks/useApp';
 
 const YoutubeDrawer: React.FC = () => {
   const { state, setState } = useApp();
   const playerRef = useRef<YT.Player | null>(null);
   const playerReady = useRef(false);
+  const [isVideoPaused,setIsVideoPaused] = useState(false)
 
   const startTimeSeconds =
     state.currentSegment && state.currentSegment.start_time_ms
@@ -67,6 +68,30 @@ const YoutubeDrawer: React.FC = () => {
       });
     }
   }, [videoId, startTimeSeconds]);
+
+ 
+
+   //Close Video
+  const videoClose = () => {
+      if (playerRef.current && playerReady.current) {
+      playerRef.current.stopVideo(); // This stops the video playback
+      
+    }
+    setState(() => ({
+        ...state,
+        isVideoModalOpen: false,
+        currentYouTubeVideo: null,
+        currentSegment: null,
+      }))
+  }
+
+  //Stop Video Playing
+  useEffect(() => {
+   if (playerRef.current && playerReady.current && state.isVideoModalOpen===false) {
+      playerRef.current.stopVideo(); // This stops the video playback
+    }
+  }, [state.isVideoModalOpen]);
+  
   return (
     <div className="relative flex justify-center w-full h-full">
       <div className="w-[600px] h-[350px] ">
@@ -88,13 +113,7 @@ const YoutubeDrawer: React.FC = () => {
         className={`${
           state.isVideoModalOpen ? 'block' : 'hidden'
         } absolute px-1 text-md text-red-400 hover:bg-base3 text-center duration-300 border border-white border-opacity-40 hover:border-opacity-100 bg-base1 right-0 -top-8 w-8 md:w-16 h-8`}
-        onClick={() => {
-          setState({
-            ...state,
-            isVideoModalOpen: false,
-            currentYouTubeVideo: '',
-          });
-        }}
+        onClick={() => videoClose()}
         aria-label="Close Video"
       >
         X

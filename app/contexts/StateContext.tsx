@@ -10,6 +10,7 @@ export const initialState: AppState = {
   currentEpisode: null,
   currentYouTubeVideo: null,
   hasSearched: false,
+  searchTerm: '',
   currentSegment: null,
   isMenuModalOpen: false,
 };

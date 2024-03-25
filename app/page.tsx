@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from 'react';
 import EpisodeSelect from './components/EpisodeSelect';
-import { SearchBar } from '@/app/components/SearchBar';
 import SearchResults from '@/app/components/SearchResults';
 import { useApp } from './hooks/useApp';
 import { useEpisodes } from './hooks/useEpisodes';
@@ -47,30 +46,20 @@ export default function Home() {
   // }, [hasMore]);
 
   return (
-    <div className="flex-col justify-center w-full h-full p-4 mx-auto xl:w-[1200px]">
+    <div className="mx-auto h-full w-full flex-col justify-center p-4 xl:w-[1200px]">
       {/* Episodes or Search Results */}
       <div className="">
         <Link href={`/thedailygwei`}>
-          <div className="text-xl py-4 text-center md:text-xl lg:text-3xl text-secondary hover:opacity-90 duration-300">
+          <div className="py-4 text-center text-xl text-secondary duration-300 hover:opacity-90 md:text-xl lg:text-3xl">
             The Daily Gwei Refuel
           </div>
         </Link>
         {/* <div className="pb-32"> */}
         <div className="">
-          {state.hasSearched ? (
-            <SearchResults episodes={state.searchResultEpisodes} />
-          ) : state.latestEpisodes ? (
+          {state.latestEpisodes &&
             state.latestEpisodes.map((episode) => (
               <EpisodeSelect key={episode._id} episode={episode} />
-            ))
-          ) : (
-            <div className="w-full flex h-screen justify-center align-middle items-center">
-              <div className="w-full text-center h-1/2 mt-10">
-                <div className="spinner"></div>
-                <p className="m-auto mt-3">Loading...</p>
-              </div>
-            </div>
-          )}
+            ))}
         </div>
       </div>
       <div ref={loader} style={{ height: '1px' }} />

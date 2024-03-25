@@ -1,7 +1,9 @@
 'use client';
 import { useApp } from '@/app/hooks/useApp';
 import { SegmentProps } from '@/types';
-import { FaPlayCircle } from 'react-icons/fa';
+import { useState } from 'react';
+import { BiStop } from 'react-icons/bi';
+import { FaPause, FaPlayCircle, FaStop } from 'react-icons/fa';
 
 interface SegmentHeaderProps {
   segment: SegmentProps;
@@ -22,6 +24,7 @@ export const SegmentHeader = ({
 }: SegmentHeaderProps) => {
   const { state, setState } = useApp();
 
+
   // Toggle segment detail view
   const handleSegmentToggle = () => {
     setShowSegmentIndex(
@@ -29,13 +32,20 @@ export const SegmentHeader = ({
     );
   };
 
-  const openVideoDrawer = () => {
-    setState(() => ({
-      ...state,
-      isVideoModalOpen: true,
-      currentYouTubeVideo: youtube_url,
-      currentSegment: segment,
-    }));
+  const toggleVideoDrawer = () => {
+    if(!state.isVideoModalOpen) {
+      setState(() => ({
+        ...state,
+        isVideoModalOpen: true,
+        currentYouTubeVideo: youtube_url,
+        currentSegment: segment,
+      }));
+    } else
+      {setState(() => ({
+        ...state,
+        isVideoModalOpen: false,
+      }))}
+    
   };
 
   return (
@@ -44,13 +54,13 @@ export const SegmentHeader = ({
       onClick={() => handleSegmentToggle()}
     >
       {/* Play Button */}
-      <div className="w-2 h-full bg-base1 group-hover:bg-secondary duration-500"></div>
-      <div className=" text-center w-16 min-w-fit h-full px-2 bg-base2 flex">
+      <div className="w-2 h-full duration-500 bg-base1 group-hover:bg-secondary"></div>
+      <div className="flex w-16 h-full px-2 text-center min-w-fit bg-base2">
         <button
-          className="text-4xl text-accent hover:text-secondary m-auto duration-300"
-          onClick={openVideoDrawer}
+          className="m-auto text-4xl duration-300 text-accent hover:text-secondary"
+          onClick={(e)=> {e.stopPropagation(),toggleVideoDrawer()}}
         >
-          <FaPlayCircle />
+          <FaPlayCircle />        
         </button>
       </div>
 
@@ -60,7 +70,7 @@ export const SegmentHeader = ({
           isOrganizedByLength ? ' w-20' : 'w-10'
         }`}
       >
-        <p className=" m-auto">
+        <p className="m-auto ">
           {isOrganizedByLength
             ? `${Math.floor(segment.segment_length_ms / 60000)}:${(
                 (segment.segment_length_ms % 60000) /
@@ -72,8 +82,8 @@ export const SegmentHeader = ({
         </p>
       </div>
       {/* HEADLINE*/}
-      <div className="flex items-start my-auto text-textBase w-10/12 max-h-16 h-16 px-4">
-        <span className="line-clamp-2 my-auto text-left">
+      <div className="flex items-start w-10/12 h-16 px-4 my-auto text-textBase max-h-16">
+        <span className="my-auto text-left line-clamp-2">
           {segment.segment_title}
         </span>
       </div>

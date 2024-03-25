@@ -2,80 +2,79 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import PageSelect from '@/app/components/EpisodeSelect';
-import { EpisodeProps } from '@/types';
 import TDG from '@/app/assets/the-daily-gwei.jpg';
-import sassano from '@/app/assets/sassano_400x400.jpg';
 import { useApp } from '../hooks/useApp';
+import Card from '../components/Card';
+
+const podcasts = [
+  {
+    name: 'The Daily Gwei Refuel',
+    href: '/thedailygwei',
+    image: TDG,
+    hosts: ['Anthony Sassano'],
+    description:
+      'The Daily Gwei Refuel gives you a recap every week day on everything that happened in the Ethereum and crypto ecosystems over the previous 24 hours - hosted by Anthony Sassano.',
+    category: ['Crypto', 'Finance'],
+  },
+  {
+    name: 'The Daily Gwei Refuel',
+    href: '/thedailygwei',
+    image: TDG,
+    hosts: ['Anthony Sassano'],
+    description:
+      'The Daily Gwei Refuel gives you a recap every week day on everything that happened in the Ethereum and crypto ecosystems over the previous 24 hours - hosted by Anthony Sassano.',
+    category: ['Crypto', 'Finance'],
+  },
+  {
+    name: 'The Daily Gwei Refuel',
+    href: '/thedailygwei',
+    image: TDG,
+    hosts: ['Anthony Sassano'],
+    description:
+      'The Daily Gwei Refuel gives you a recap every week day on everything that happened in the Ethereum and crypto ecosystems over the previous 24 hours - hosted by Anthony Sassano.',
+    category: ['Crypto', 'Finance'],
+  },
+  {
+    name: 'The Daily Gwei Refuel',
+    href: '/thedailygwei',
+    image: TDG,
+    hosts: ['Anthony Sassano'],
+    description:
+      'The Daily Gwei Refuel gives you a recap every week day on everything that happened in the Ethereum and crypto ecosystems over the previous 24 hours - hosted by Anthony Sassano.',
+    category: ['Crypto', 'Finance'],
+  },
+];
 
 export default function Home() {
   const { state } = useApp();
 
   return (
-    <div className="flex flex-col items-center w-full max-w-full ">
-      <div className="flex flex-col space-y-6 ">
-        {/* Podcast Card*/}
-        <Link href={`/thedailygwei`}>
-          <div className="flex flex-col space-y-6">
-            <div className="flex items-center p-4 border rounded">
-              {/* Image on the left */}
-              <div className="mr-4">
-                <Image
-                  src={TDG}
-                  alt={'The Daily Gwei'}
-                  className="w-32 h-32"
-                  width={90}
-                  height={90}
-                />
-              </div>
-              {/* Info on the right */}
-              <div className="max-w-md break-words">
-                <h1 className="text-xl text-center text-accent">
-                  The Daily Gwei Refuel
-                </h1>
-                <p className="text-sm text-center text-gray-400">
-                  The Daily Gwei Refuel gives you a recap every week day on
-                  everything that happened in the Ethereum and crypto ecosystems
-                  over the previous 24 hours - hosted by Anthony Sassano.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-        {/* Host Card*/}
-        <Link href={`/thedailygwei`}>
-          <div className="flex flex-col space-y-6">
-            <div className="flex items-center p-4 border rounded">
-              {/* Image on the left */}
-              <div className="mr-4">
-                <Image
-                  src={sassano}
-                  alt={'The Daily Gwei'}
-                  className="w-32 h-32"
-                  width={90}
-                  height={90}
-                />
-              </div>
-              {/* Info on the right */}
-              <div className="max-w-md break-words">
-                <h1 className="text-xl text-center text-accent">
-                  Anthony Sassano
-                </h1>
-                <p className="text-sm text-center text-gray-400">
-                  Independent Ethereum educator, investor and advisor.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </div>
-
-      {/* Episodes */}
-      <div className="pb-32">
-        {state.latestEpisodes &&
-          state.latestEpisodes.map((episode: EpisodeProps, index: number) => (
-            <PageSelect key={episode._id} episode={episode} />
-          ))}
+    <div className="flex w-full max-w-full flex-col items-center pb-24">
+      <h1 className="my-8 flex text-center text-2xl font-light sm:text-3xl">
+        <span className="mr-3 hidden font-semibold sm:block">TLDL </span>
+        SUPPORTED PODCASTS
+      </h1>
+      <div className="grid-rows-auto mt-4 grid max-w-5xl grid-cols-1 gap-x-20 gap-y-12 sm:mt-12 lg:grid-cols-2">
+        {podcasts.map((podcast) => (
+          <Link href={podcast.href}>
+            <Card
+              topBarColor="bg-accent"
+              cardTitle={podcast.name}
+              cardSubTitle={podcast.hosts}
+              cardSubTitle2={podcast.category}
+              cardBody={podcast.description}
+              imageHref={podcast.image}
+              backgroundColor="bg-base2"
+              cardFooter={
+                <h3 className="w-full text-right text-sm">
+                  <span className="font-semibold">TLDL </span>
+                  <span className="">Episodes: </span>
+                  <span className="font-bold">156</span>
+                </h3>
+              }
+            />
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ const EpisodeSegment: FC<EpisodeSegmentProps> = ({
 
   useEffect(() => {
     // If segment.URL is empty or contains only invalid URLs, set isTweetLoaded to true
-    if (!segment.URL || segment.URL.every((url) => !url)) {
+    if (!segment.URL) {
       setIsTweetLoaded(true);
     }
   }, [segment.URL]);
@@ -62,7 +62,7 @@ const EpisodeSegment: FC<EpisodeSegmentProps> = ({
   return (
     <div
       id={`${segment.segment_number}`}
-      className="align-middle xl:max-w-[1200px] relative shadow-inner shadow-black"
+      className="relative align-middle shadow-inner shadow-black xl:max-w-[1200px]"
       key={segment.segment_number}
     >
       <li className="cursor-pointer">
@@ -76,11 +76,11 @@ const EpisodeSegment: FC<EpisodeSegmentProps> = ({
         />
 
         {showSegmentIndex === segmentNumber && (
-          <div className="flex-col w-full max-w-full pb-8 shadow-inner shadow-black md-text-l bg-base1 text-accent relative">
+          <div className="md-text-l relative w-full max-w-full flex-col bg-base1 pb-8 text-accent shadow-inner shadow-black">
             <button
-              className={`border border-white bg-base1 hover:bg-base1 border-opacity-40 duration-500 md:hover:border-opacity-100 px-6 py-1 absolute flex items-center justify-center shadow-lg font-bold text-primary rounded top-7 ${
+              className={`absolute top-7 flex items-center justify-center rounded border border-white border-opacity-40 bg-base1 px-6 py-1 font-bold text-primary shadow-lg duration-500 hover:bg-base1 md:hover:border-opacity-100 ${
                 copySuccess === true ? 'shadow-transparent ' : 'shadow-black'
-              } right-4 xl:right-52 hover:bg-baseText2`}
+              } hover:bg-baseText2 right-4 xl:right-52`}
               onClick={() =>
                 handleShare({ segment, youtube_url, setCopySuccess })
               }
@@ -98,8 +98,8 @@ const EpisodeSegment: FC<EpisodeSegmentProps> = ({
             {isTweetLoaded ? (
               <SummarySlider segment={segment} />
             ) : (
-              <div className="w-full flex justify-center align-middle items-center">
-                <div className="w-full text-center h-1/2 mt-10">
+              <div className="flex w-full items-center justify-center align-middle">
+                <div className="mt-10 h-1/2 w-full text-center">
                   <div className="spinner"></div>
                   <p className="m-auto mt-3">Loading...</p>
                 </div>

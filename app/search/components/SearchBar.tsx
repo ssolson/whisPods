@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
 import { IoSearch, IoClose } from 'react-icons/io5';
-import { useApp } from '../hooks/useApp';
+import { useApp } from '../../hooks/useApp';
 import { useRouter } from 'next/navigation';
 
 export const SearchBar = () => {
